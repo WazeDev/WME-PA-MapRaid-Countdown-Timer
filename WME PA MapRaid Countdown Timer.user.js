@@ -1,7 +1,7 @@
 // // ==UserScript==
 // @name         WME PA MapRaid Countdown Timer
 // @namespace    https://greasyfork.org/users/45389
-// @version      0.4
+// @version      0.5
 // @description  Adds a countdown timer to start and end of the PA MapRaid.
 // @author       MapOMatic
 // @include      /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
