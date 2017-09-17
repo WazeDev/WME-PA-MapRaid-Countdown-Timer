@@ -1,7 +1,7 @@
 // // ==UserScript==
 // @name         WME PA MapRaid Countdown Timer
 // @namespace    https://greasyfork.org/users/45389
-// @version      0.5
+// @version      0.6
 // @description  Adds a countdown timer to start and end of the PA MapRaid.
 // @author       MapOMatic
 // @include      /^https:\/\/(www|beta)\.waze\.com\/(?!user\/)(.{2,6}\/)?editor\/?.*$/
@@ -35,7 +35,6 @@
                 if (result && result.feed && result.feed.entry && result.feed.entry.length > 0) {
                     var mrInfo = {success:false};
                     result.feed.entry.forEach(function(entry) {
-                        debugger;
                         if (entry.gsx$id && entry.gsx$id.$t === MAPRAID_ID && entry.gsx$end && entry.gsx$title && entry.gsx$start && entry.gsx$zone) {
                             mrInfo.success = true;
                             mrInfo.title = entry.gsx$title.$t;
@@ -43,6 +42,7 @@
                             mrInfo.start = entry.gsx$start.$t;
                             mrInfo.end = entry.gsx$end.$t;
                             mrInfo.id = entry.gsx$id.$t;
+                            mrInfo.hover = entry.gsx$hover ? entry.gsx$hover.$t : undefined;
                         }
                     });
                     if (mrInfo.success) {
@@ -61,13 +61,14 @@
     function updateClock() {
         $('#user-box').css('padding-bottom','0px');
         $('#user-profile').css('margin-bottom','0px');
-debugger;
+
         var now = moment();
         var start = moment.tz(_mapRaidInfo.start, _mapRaidInfo.zone);
         var end = moment.tz(_mapRaidInfo.end, _mapRaidInfo.zone);
         var startsIn = moment.duration(start.diff(now));
         var endsIn = moment.duration(end.diff(now));
         var text = _mapRaidInfo.title;
+        var hover = _mapRaidInfo.hover;
         var css = {};
         if (endsIn.asMilliseconds() < 0) {
             text += ' is OVER.  Thanks for your help!';
@@ -80,7 +81,12 @@ debugger;
             css = endsIn.asDays() < 1 ? {backgroundColor: '#ffef00', color: 'red'} : {backgroundColor:'green', color:'white'};
         }
 
-        $clockDiv.text(text).css(css);
+        if ($clockDiv.text() !== text) {
+            $clockDiv.text(text).css(css);
+        }
+        if (hover && $clockDiv.attr('title') !== hover) {
+            $clockDiv.attr('title', hover);
+        }
     }
 
     function formatTime(duration) {
